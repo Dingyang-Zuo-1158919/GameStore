@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:5069
+
+GET {{baseUrl}}/games
+
+###
+GET {{baseUrl}}/games/2
+
+###
+POST {{baseUrl}}/games
+Content-Type: application/json
+
+{
+  "name": "Pokemon Legends X/Y",
+  "genre": "JRPG",
+  "price": 60.99,
+  "releaseDate": "2013-11-15"
+}
+
+###
+PUT {{baseUrl}}/games/8
+Content-Type: application/json
+
+{
+  "name": "Pokemon Sun/Moon",
+  "genre": "JRPG",
+  "price": 60.99,
+  "releaseDate": "2016-11-15"
+}
+
+###
+DELETE {{baseUrl}}/games/5

@@ -23,3 +23,10 @@
 /Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/obj/Debug/net8.0/GameStore.Server.pdb
 /Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/obj/Debug/net8.0/GameStore.Server.genruntimeconfig.cache
 /Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/obj/Debug/net8.0/ref/GameStore.Server.dll
+/Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/obj/Debug/net8.0/GameStore.Server.sourcelink.json
+/Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/bin/Debug/net8.0/Microsoft.OpenApi.dll
+/Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/bin/Debug/net8.0/MinimalApis.Extensions.dll
+/Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/bin/Debug/net8.0/MiniValidation.dll
+/Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/obj/Debug/net8.0/GameStore.Server.csproj.AssemblyReference.cache
+/Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/obj/Debug/net8.0/GameStore.Server.MvcApplicationPartsAssemblyInfo.cs
+/Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Server/obj/Debug/net8.0/GameStor.D3E5302D.Up2Date

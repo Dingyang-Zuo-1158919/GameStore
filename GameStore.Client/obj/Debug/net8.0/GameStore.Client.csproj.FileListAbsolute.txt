@@ -1028,3 +1028,4 @@
 /Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Client/obj/Debug/net8.0/refint/GameStore.Client.dll
 /Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Client/obj/Debug/net8.0/GameStore.Client.pdb
 /Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Client/obj/Debug/net8.0/ref/GameStore.Client.dll
+/Users/dingyangzuo/Desktop/programming/GameStore/GameStore.Client/obj/Debug/net8.0/GameStore.Client.sourcelink.json
