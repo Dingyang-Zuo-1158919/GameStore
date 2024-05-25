@@ -1,48 +1,7 @@
 using GameStore.Server.Models;
+using GameStore.Server.Data;
+using Microsoft.EntityFrameworkCore;
 
-List<Game> games = new()
-    {
-        new Game()
-        {
-            Id = 1,
-            Name = "Pokemon Scarlet/Violet",
-            Genre = "RPG",
-            Price = 50.99M,
-            ReleaseDate = new DateTime(2022, 11, 18)
-        },
-        new Game()
-        {
-            Id = 2,
-            Name = "Pokemon Legends Z-A",
-            Genre = "JRPG",
-            Price = 60.99M,
-            ReleaseDate = new DateTime(205, 6, 18)
-        },
-        new Game()
-        {
-            Id = 3,
-            Name = "Pokemon Sword/Shield",
-            Genre = "RPG",
-            Price = 55.99M,
-            ReleaseDate = new DateTime(2019, 11, 18)
-        },
-        new Game()
-        {
-            Id = 4,
-            Name = "Pokemon Legends",
-            Genre = "JRPG",
-            Price = 65.99M,
-            ReleaseDate = new DateTime(2022, 1, 18)
-        },
-        new Game()
-        {
-            Id = 5,
-            Name = "Pokemon SV DLC",
-            Genre = "DLC",
-            Price = 55.99M,
-            ReleaseDate = new DateTime(2023, 11, 18)
-        },
-    };
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +12,9 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(builder =>
             .AllowAnyMethod();
 }));
 
+var connString = builder.Configuration.GetConnectionString("GameStoreContext");
+builder.Services.AddSqlServer<GameStoreContext>(connString);
+
 var app = builder.Build();
 
 app.UseCors();
@@ -60,12 +22,22 @@ app.UseCors();
 var group = app.MapGroup("/games").WithParameterValidation();
 
 //GET /games
-group.MapGet("/", () => games);
+group.MapGet("/", async (string? filter, GameStoreContext context) =>
+{
+    var games = context.Games.AsNoTracking();
+
+    if (filter is not null)
+    {
+        games = games.Where(games => games.Name.Contains(filter) || games.Genre.Contains(filter));
+    }
+
+    return await games.ToListAsync();
+});
 
 //GET /games/{id}
-group.MapGet("/{id}", (int id) =>
+group.MapGet("/{id}", async (int id, GameStoreContext context) =>
 {
-    Game? game = games.Find(game => game.Id == id);
+    Game? game = await context.Games.FindAsync(id);
     if (game is null)
     {
         return Results.NotFound();
@@ -74,48 +46,33 @@ group.MapGet("/{id}", (int id) =>
 }).WithName("GetGame");
 
 //POST /games
-group.MapPost("/", (Game game) =>
+group.MapPost("/", async (Game game, GameStoreContext context) =>
 {
-    game.Id = games.Max(game => game.Id) + 1;
-    games.Add(game);
+    context.Games.Add(game);
+    await context.SaveChangesAsync();
 
     return Results.CreatedAtRoute("GetGame", new { id = game.Id }, game);
 });
 
 //PUT /games/{id}
-group.MapPut("/{id}", (int id, Game updatedGame) =>
+group.MapPut("/{id}", async (int id, Game updatedGame, GameStoreContext context) =>
 {
-    Game? existingGame = games.Find(game => game.Id == id);
-
-    if (existingGame is null)
-    {
-        updatedGame.Id = id;
-        games.Add(updatedGame);
-
-        return Results.CreatedAtRoute("GetGame", new { id = updatedGame.Id }, updatedGame);
-    }
-
-    existingGame.Name = updatedGame.Name;
-    existingGame.Genre = updatedGame.Genre;
-    existingGame.Price = updatedGame.Price;
-    existingGame.ReleaseDate = updatedGame.ReleaseDate;
-
-    return Results.NoContent();
+    var rowsAffected = await context.Games.Where(game => game.Id == id)
+                        .ExecuteUpdateAsync(updates =>
+                            updates.SetProperty(game => game.Name, updatedGame.Name)
+                                    .SetProperty(game => game.Genre, updatedGame.Genre)
+                                    .SetProperty(game => game.Price, updatedGame.Price)
+                                    .SetProperty(game => game.ReleaseDate, updatedGame.ReleaseDate));
+    return rowsAffected == 0 ? Results.NotFound() : Results.NoContent();
 });
 
 //DELETE /games/{id}
-group.MapDelete("/{id}", (int id) =>
+group.MapDelete("/{id}", async (int id, GameStoreContext context) =>
 {
-    Game? game = games.Find(game => game.Id == id);
+    var rowsAffected = await context.Games.Where(game => game.Id == id)
+                        .ExecuteDeleteAsync();
 
-    if (game is null)
-    {
-        return Results.NotFound();
-        //return Results.NoContent();
-    }
-
-    games.Remove(game);
-    return Results.NoContent();
+    return rowsAffected == 0 ? Results.NotFound() : Results.NoContent();
 });
 
 app.Run();
